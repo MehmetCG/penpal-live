@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% load static %}
+
+
+{% block head %}
+
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+{% endblock %}
+    
+
+{% block content %}
+
+    
+    <div class="container profile-page">
+        <div class="row">
+          
+                <div class="card profile-header">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="profile-image float-md-right" style="text-align: center;" > 
+                                    <img src="{{ profile.image.url }}" alt="" >
+                                    <h4 class="m-t-0 m-b-0"><strong>{{ profile.user }}</strong></h4>
+                                </div>                             
+                            </div>
+                            <div class="col-lg-8 col-md-8 col-12">
+                                <table class="table table-user-information">
+                                    <tbody>
+                                        <tr>
+                                            <td>Status:</td>
+                                            {% if profile.is_online %}
+                                            <td><small class="chat-alert-layout badge badge-success" >Online</small></td>
+                                            {% else %}
+                                            <td><small class="chat-alert-layout badge badge-danger" >Last Seen</small> : {{profile.last_seen}}</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td>Gender, Age:</td>
+                                            <td>{{ profile.gender }}, {{ profile.age }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Country:</td>
+                                            <td>{{ profile.country }}</td>
+                                        </tr>                                 
+                                            <td>Native Language:</td>
+                                            <td>{{ profile.nativeLanguage }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Practising Language:</td>
+                                            <td>{{ profile.practisingLanguage }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Description:</td>
+                                            <td> {{ profile.description }}</td>
+                                        </tr>                       
+                                    </tbody>
+                                </table>                        
+                                <div>
+                                    {% if profile.user == user %}
+                                    <a href="{% url 'profileUpdate' %}"><button class="btn btn-primary btn-round btn-simple">Update</button></a>
+                                    {% else %}
+                                    <a href="{% url 'chat' profile.user %}"><button class="btn btn-primary btn-round btn-simple">Message</button></a>
+                                    {% endif %}
+                                </div>                              
+                            </div>                
+                        </div>
+                    </div>                    
+                </div>
+            
+        </div>
+    </div>
+   
+
+{% endblock %}

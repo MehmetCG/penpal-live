@@ -1,0 +1,153 @@
+{% extends "layout.html" %}
+{% load static %}
+
+
+{% block head %}
+
+<title>Home</title>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="col-md-9"  style="float: right; padding: 1%;" >
+        
+        {% for profile in profiles %}
+        {% if profile.gender %}
+        <div class="container profile-page">
+            <div class="row">         
+                <div class="card profile-header">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="profile-image float-md-right" style="text-align: center;" > 
+                                    <img src="{{ profile.image.url}}" alt="" >
+                                    <div>
+                                        <h4 class="m-t-0 m-b-0"><strong>{{ profile.user }}</strong></h4>
+                                        <a href="{% url 'chat' profile.user %}"><button class="btn btn-primary btn-round btn-simple">Message</button></a>
+                                    </div>
+                                </div>                             
+                            </div>
+                            <div class="col-lg-8 col-md-8 col-12">                               
+                                <table class="table table-user-information">
+                                    <tbody>
+                                        <tr>
+                                            <td>Status:</td>
+                                            {% if profile.is_online %}
+                                            <td><small class="chat-alert-layout badge badge-success" >Online</small></td>
+                                            {% else %}
+                                            <td><small class="chat-alert-layout badge badge-danger" >Last Seen</small> : {{profile.last_seen}}</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td>Gender, Age:</td>
+                                            <td>{{ profile.gender }}, {{ profile.age }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Country:</td>
+                                            <td>{{ profile.country }}</td>
+                                        </tr>                                 
+                                            <td>Native Language:</td>
+                                            <td>{{ profile.nativeLanguage }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Practising Language:</td>
+                                            <td>{{ profile.practisingLanguage }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Description:</td>
+                                            <td> {{ profile.description }}</td>
+                                        </tr>                       
+                                    </tbody>
+                                </table>                        
+                                                             
+                            </div>                
+                        </div>
+                    </div>                    
+                </div>    
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <img src="/media/home.png" alt="Nature" class="responsive" style="width: 100%; height:auto;  ">
+        {% endfor %}
+        
+    </div>
+
+    <div class="col-md-3 bg-light" id="filter" style="float:left; padding:1%; " >
+        <form action="{% url 'home' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="age1">Min Age</label>                      
+                <select id="age1" name="age1" class="form-control">
+                <option style="background-color: dodgerblue;" >{{latestSearch.minAge}}</option>
+                {% for number in numbers %}
+                    <option>{{ number }}</option>
+                {% endfor %}                        
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="age2">Max Age</label>                      
+                <select id="age2" name="age2" class="form-control">
+                <option style="background-color: dodgerblue;" >{{latestSearch.maxAge}}</option>
+                {% for number in numbers %}
+                <option>{{ number }}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" name="gender" >
+                    <option style="background-color: dodgerblue;" >{{latestSearch.gender}}</option>
+                    <option>Both</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select class="form-control" id="country" name="country">
+                    <option style="background-color: dodgerblue;" >{{latestSearch.country}}</option>
+                    <option>All</option>
+                    {% for country in countries %}
+                        <option>{{country}}</option>
+                    {% endfor %}
+                </select>                       
+            </div>
+
+            <div class="form-group">
+                <label for="nativeLanguage" >Native Language</label>
+                <select class="form-control" id="nativeLanguage" name="nativeLanguage" >
+                    <option style="background-color: dodgerblue;" >{{latestSearch.nativeLanguage}}</option>
+                    <option>All</option>
+                    {% for language in languages %}
+                        <option>{{language}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="practisingLanguage">Practising Language</label>
+                <select class="form-control" id="practisingLanguage" name="practisingLanguage" >
+                    <option style="background-color: dodgerblue;" >{{latestSearch.practisingLanguage}}</option>
+                    <option>All</option>
+                    {% for language in languages %}
+                        <option>{{language}}</option>
+                    {% endfor %}
+                </select>      
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Search</button>
+
+        </form>
+    </div>
+
+        
+{% endblock %}

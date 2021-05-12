@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load custom_filter %}
+
+
+{% block head %}
+
+    <title>ChatBox</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> 
+    
+
+{% endblock %}
+
+{% block content %}
+
+
+ <!-- Chat Box start-->
+
+<div id="frame">
+  <div id="sidepanel">
+    <div id="top-search">
+    <div id="search">
+      <input type="text" placeholder="Search contacts..." />
+      <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+    </div>
+    <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
+    </div>
+  <div id="contacts" >
+    <ul class="list-unstyled" id="chatedPeople">
+      {% for msg in msgs %}  
+        {% if msg.senders.first != request.user %}
+        <li class="contact" id="contact{{msg.senders.first}}" {% if msg.senders.first == otheruser %} style="background-color: #eaeef3;" {% endif %}>
+            <a href="{% url 'chat' msg.senders.first %}">
+              <div class="wrap">
+                <div class="img-block">
+                  </span><img src="{{ msg.senders.first.userprofile.image.url }}" alt="" />
+                </div>                       
+                <div class="meta">
+                  <h5 class="name bold my-0 text-primary">{{ msg.senders.first }}</h5>
+                  <p class="preview" id="latest{{msg.senders.first}}">{{ msg.messageText}}</p>
+                </div>
+                {% countUnread msg.senders.first user as notZero %}
+                {% if notZero %}
+                <small id = "alert{{msg.senders.first}}" class="chat-alert badge badge-success">{% countUnread msg.senders.first user %}</small> <!-- it takes a value from custom_filter.py-->
+                {%else%}
+                <small style="display: none;" id = "alert{{msg.senders.first}}" class="chat-alert badge badge-success">0</small>
+                {% endif %}
+              </div>
+            </li>
+          </a>
+        {% else %}
+        <li class="contact" id="contact{{msg.senders.last}}" {% if msg.senders.last == otheruser %} style="background-color: #eaeef3;" {% endif %}>
+          <a href="{% url 'chat' msg.senders.last %}">
+            <div class="wrap">
+              <div class="img-block">
+                </span><img src="{{ msg.senders.last.userprofile.image.url }}" alt="" />
+              </div>                       
+              <div class="meta">
+                <h5 class="name bold my-0 text-primary">{{ msg.senders.last }} </h5>
+                <p class="preview" id="latest{{msg.senders.last}}" >{{ msg.messageText }}</p>
+              </div>
+              {% countUnread msg.senders.last user as notZero %}
+              {% if notZero %}
+              <small id = "alert{{msg.senders.last}}" class="chat-alert badge badge-success">{% countUnread msg.senders.last user %}</small>
+              {%else%}
+              <small style="display: none;" id = "alert{{msg.senders.last}}" class="chat-alert badge badge-success">0</small>
+              {% endif %}
+            </div>
+          </li>
+        </a>
+        {% endif %}
+      {% endfor %} 
+    </ul>
+  </div>
+  </div>
+  {% if otheruser %}
+  <div class="content">
+    <div class="contact-profile">
+      <a href="{% url 'profile' otheruser %}">
+      <img src="{{ otheruser.userprofile.image.url }}" alt="" />
+      <div class="green_icon"></div>
+      
+      <div class="text-area">
+        <h4 id = "name-section" class="bold my-0">{{ otheruser }}</h4></a>
+        {% if otheruser.userprofile.is_online %}
+        <p><i>Online</i></p>
+        {% else %}                 
+        <p><i> Last Seen : {{ otheruser.userprofile.last_seen | date:'G:i | F d'}}</i></p>
+        {% endif %}          
+      </div>   
+    </div>
+
+    <div class="messages"  id="messages" >
+      <ul class="list-unstyled" id="chats">
+        {% for chat in chats %}
+          {% ifchanged chat.created.date %} 
+          <li class="msg-day"><small>{{chat.created.date}}</small></li>
+          {% endifchanged %}
+          {% if chat.sender == otheruser %}
+            <li class="sent">
+              <div class="img-block">
+                </span><img src="{{ otheruser.userprofile.image.url }}" alt="">
+              </div>
+              <div class="msgbox">
+                <p>{{ chat.messageText }} </p>
+                <small class="timeBlock">{{ chat.created | date:'G:i' }}</small>
+              </div>
+            </li>
+          {% elif  chat.recipient == otheruser %}
+            <li class="replies">
+                <div class="img-block">                     
+                  <img src="{{ user.userprofile.image.url }}" alt="" />
+                </div>
+                <div class="msgbox">
+                  <p>{{ chat.messageText }}</p>
+                  <small class="timeBlock">{{ chat.created | date:'G:i' }}</small>
+                </div>
+            </li>
+            
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="message-input">
+      <div class="wrap">
+        <form id=messageBox   autocomplete="off">
+          {% csrf_token %}
+          <input type="text" name="messagetext" id="messageText" placeholder="Write your message..."  autofocus />
+          <button class="submit" type="submit" id="sendButton" ><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div><!--frame-->
+<!-- Chat Box close-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<script type="text/javascript" src="{% static 'js/chat.js' %}"></script>
+
+{% endblock %}

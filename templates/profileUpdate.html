@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block head %}
+    <title>Profile Update</title>
+{% endblock %}
+
+
+{% block content %}
+    
+<div class="container bootstrap snippet">
+    <form class="form" action="{% url 'profileUpdate' %}" enctype="multipart/form-data" method="POST" id="registrationForm">
+    {% csrf_token %}
+    <hr>
+        <div class="row">
+            <div class="col-sm-3"><!--left col-->   
+                <div class="text-center">               
+                <img src="{{ profile.image.url }}"  class="avatar img-circle img-thumbnail" alt="avatar">
+                <h6>Upload a different photo...</h6>
+                <input type="file" name = "image"  class="text-center center-block file-upload" accept="image/png, .jpeg, .jpg" />
+            </div>  
+            </div><!--/col-3-->
+            <div class="col-sm-9">             
+            <div class="tab-content">
+                <div class="tab-pane active" id="home">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">                                                          
+                                        <label for="age" >Age</label>               
+                                        <input type="number" class="form-control" id="age" name="age" value= {{ profile.age }} required>                                 
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">                                                       
+                                        <label for="gender" >Gender</label>                             
+                                        <select class="form-control" id="gender" name="gender" required >
+                                            <option>{{profile.gender}}</option>
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                        </select>                                    
+                                </div>   
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">                                                        
+                                        <label for="country" >Country</label>                            
+                                        <select class="form-control" id="country" name="country" required >
+                                            <option>{{profile.country}}</option>
+                                            {% for country in countries %}
+                                                <option>{{country}}</option>
+                                            {% endfor %}
+                                        </select>                               
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">        
+                                <div class="form-group">                               
+                                        <label for="nativeLanguage" >Native Language</label>                       
+                                        <select class="form-control" id="nativeLanguage" name="nativeLanguage" required >
+                                            <option>{{profile.nativeLanguage}}</option>
+                                            {% for language in languages %}
+                                                <option>{{language}}</option>
+                                            {% endfor %}
+                                        </select>                                       
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">                         
+                                    <label for="practisingLanguage">Practising Language</label>              
+                                    <select class="form-control" id="practisingLanguage" name="practisingLanguage" required>
+                                        <option>{{profile.practisingLanguage}}</option>
+                                        {% for language in languages %}
+                                            <option>{{language}}</option>
+                                        {% endfor %}
+                                    </select>   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">                         
+                                <label for="description">Description</label>             
+                                <textarea class="form-control" id="description" name="description" rows="6" style="resize: none;" required>{{ profile.description }}</textarea>
+                            </div>
+                        </div>                       
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <br>
+                                <button class="btn btn-lg btn-primary" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                            </div>
+                        </div>
+                        <hr>                
+                    </div><!--/tab-pane--> 
+                </div><!--/tab-content-->
+            </div><!--/col-9-->
+        </div><!--/row-->
+    </form>              
+</div>
+
+<script  type="text/javascript" src="{% static 'js/profileUpdate.js' %}"></script>
+
+{% endblock %}
