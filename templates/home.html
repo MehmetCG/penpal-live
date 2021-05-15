@@ -13,7 +13,7 @@
 
 {% block content %}
 
-    <div class="col-md-9"  style="float: right; padding: 1%;" >
+    <div class="col-md-9" id="profiles"  style="float: right; padding: 1%;" >
         
         {% for profile in profiles %}
         {% if profile.gender %}
@@ -72,7 +72,7 @@
         </div>
         {% endif %}
         {% empty %}
-        <img src="/media/home.png" alt="Nature" class="responsive" style="width: 100%; height:auto;  ">
+        <img src="/media/home.png" id ="homeImage"alt="Nature" class="responsive" style="width: 100%; height:auto;  ">
         {% endfor %}
         
     </div>
@@ -84,19 +84,18 @@
             <div class="form-group">
                 <label for="age1">Min Age</label>                      
                 <select id="age1" name="age1" class="form-control">
-                <option style="background-color: dodgerblue;" >{{latestSearch.minAge}}</option>
+                
                 {% for number in numbers %}
-                    <option>{{ number }}</option>
+                    <option {% if latestSearch.minAge == number %} selected="selected" {% endif %} >{{ number }}</option>
                 {% endfor %}                        
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="age2">Max Age</label>                      
-                <select id="age2" name="age2" class="form-control">
-                <option style="background-color: dodgerblue;" >{{latestSearch.maxAge}}</option>
+                <select id="age2" name="age2" class="form-control">               
                 {% for number in numbers %}
-                <option>{{ number }}</option>
+                <option {% if latestSearch.maxAge == number %} selected="selected" {% endif %} >{{ number }}</option>
                 {% endfor %}
                 </select>
             </div>
@@ -104,20 +103,18 @@
             <div class="form-group">
                 <label for="gender">Gender</label>
                 <select class="form-control" id="gender" name="gender" >
-                    <option style="background-color: dodgerblue;" >{{latestSearch.gender}}</option>
-                    <option>Both</option>
-                    <option>Male</option>
-                    <option>Female</option>
+                    <option {% if latestSearch.gender == "Both" %} selected="selected" {% endif %} >Both</option>
+                    <option {% if latestSearch.gender == "Male" %} selected="selected" {% endif %} >Male</option>
+                    <option {% if latestSearch.gender == "Female" %} selected="selected" {% endif %} >Female</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="country">Country</label>
                 <select class="form-control" id="country" name="country">
-                    <option style="background-color: dodgerblue;" >{{latestSearch.country}}</option>
-                    <option>All</option>
+                    <option {% if latestSearch.country == "All" %} selected="selected" {% endif %} >All</option>
                     {% for country in countries %}
-                        <option>{{country}}</option>
+                        <option {% if latestSearch.country == country %} selected="selected" {% endif %} >{{country}}</option>
                     {% endfor %}
                 </select>                       
             </div>
@@ -125,10 +122,9 @@
             <div class="form-group">
                 <label for="nativeLanguage" >Native Language</label>
                 <select class="form-control" id="nativeLanguage" name="nativeLanguage" >
-                    <option style="background-color: dodgerblue;" >{{latestSearch.nativeLanguage}}</option>
-                    <option>All</option>
+                    <option {% if latestSearch.nativeLanguage == "All" %} selected="selected" {% endif %} >All</option>
                     {% for language in languages %}
-                        <option>{{language}}</option>
+                        <option {% if latestSearch.nativeLanguage == language %} selected="selected" {% endif %} >{{language}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -136,10 +132,9 @@
             <div class="form-group">
                 <label for="practisingLanguage">Practising Language</label>
                 <select class="form-control" id="practisingLanguage" name="practisingLanguage" >
-                    <option style="background-color: dodgerblue;" >{{latestSearch.practisingLanguage}}</option>
-                    <option>All</option>
+                    <option {% if latestSearch.practisingLanguage == All %} selected="selected" {% endif %} >All</option>
                     {% for language in languages %}
-                        <option>{{language}}</option>
+                        <option {% if latestSearch.practisingLanguage == language %} selected="selected" {% endif %} >{{language}}</option>
                     {% endfor %}
                 </select>      
             </div>
@@ -149,5 +144,6 @@
         </form>
     </div>
 
-        
+<script type="text/javascript" src="{% static 'js/home.js' %}"></script>
+       
 {% endblock %}

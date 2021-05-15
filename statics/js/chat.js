@@ -11,6 +11,11 @@ function showchatedPeople (){
   }
 }
 
+function auto_grow(element) {
+  element.style.height = "5px";
+  element.style.height = (element.scrollHeight)+"px";
+}
+
 showchatedPeople() // to show side panel which is hiden on small screens
 
 function appendSentMessage(message) {     
@@ -49,7 +54,7 @@ var otheruser = current_url.split("/")[4]
 //this part is for sending new message
 $("#messageBox").submit(function(e) {
     e.preventDefault();   
-    var messageInput = $('input[name="messagetext"]').val();
+    var messageInput = $('textarea[name="messagetext"]').val();
     $("#messageBox").trigger('reset');
     
     if (messageInput){
@@ -60,15 +65,13 @@ $("#messageBox").submit(function(e) {
         dataType: 'json',
         headers: { "X-CSRFToken":'{{csrf_token}}', 'X-Requested-With': 'XMLHttpRequest' },           
         success: function (data) {          
-          appendSentMessage(data.message)
+          appendSentMessage(data)
           scrollToBottom("messages");
-          console.log($("#contact"+otheruser));
-          console.log($("#contact"+otheruser).length);
           if ( $("#contact"+otheruser).length > 0 ){
             $("#contact"+otheruser).prependTo("#chatedPeople");
             $("#latest"+otheruser).html(messageInput);
           }else{
-            createSentChated(data.message);
+            createSentChated(data);
           }
           
         }});
@@ -82,25 +85,25 @@ $("#messageBox").submit(function(e) {
  
   function updateMsg() {   
     $.getJSON("/get_message/"+otheruser, function(data){
-      if (data.result.messageID > oldID) {   
-        var counter = parseInt($("#alert"+data.result.sender).text())
-        if (data.result.sender == otheruser){
-          appendReceivedMessage(data.result);
+      if (data.messageID > oldID) {   
+        var counter = parseInt($("#alert"+data.sender).text())
+        if (data.sender == otheruser){
+          appendReceivedMessage(data);
         }else{ 
           ++counter;
-          $("#alert"+data.result.sender).html(counter);
-          $("#alert"+data.result.sender).show();
+          $("#alert"+data.sender).html(counter);
+          $("#alert"+data.sender).show();
         };
-        if ($("#contact"+data.result.sender).length > 0){
-          $("#contact"+data.result.sender).prependTo("#chatedPeople");
-          $("#latest"+data.result.sender).html(data.result.messageText);
+        if ($("#contact"+data.sender).length > 0){
+          $("#contact"+data.sender).prependTo("#chatedPeople");
+          $("#latest"+data.sender).html(data.messageText);
         }else{
-          createReceivedChated(data.result);
+          createReceivedChated(data);
         }
         scrollToBottom("messages");
       };
       
-      oldID = data.result.messageID;
+      oldID = data.messageID;
       setTimeout('updateMsg()', 1000);
     });
 };

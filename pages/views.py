@@ -3,7 +3,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Message, LatestSearch, LatestMessage, UnreadMessage
+from .models import *
 from django_countries import countries
 from django.conf.global_settings import LANGUAGES
 from django.core.files.storage import FileSystemStorage
@@ -18,6 +18,9 @@ from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import *
 
 
 
@@ -90,49 +93,43 @@ def signup(request):
 
 @login_required
 def home(request):
-
     languages = dict(sorted(dict(LANGUAGES).items(), key = lambda item: item[1])).values()  #alphatize dictionary values 
     countriess = dict(countries).values()
-    profiles = UserProfile.objects.exclude(user = request.user).order_by( "-is_online" , "-last_seen")
     numbers = list(range(101))
     latestSearch = LatestSearch.objects.filter(searcher = request.user).first()
 
-    if request.method == "POST":
-        age1 = request.POST["age1"]
-        age2 = request.POST["age2"]
-        gender = request.POST["gender"]
-        country = request.POST["country"]
-        nativeLanguage = request.POST["nativeLanguage"]
-        practisingLanguage = request.POST["practisingLanguage"]
+    context = { "countries":countriess, "languages":languages, "numbers":numbers,"latestSearch":latestSearch }
+    return render( request, "home.html", context )
 
-        LatestSearch.objects.filter(searcher = request.user).update( minAge = age1, maxAge = age2,  gender = gender, 
+
+def search(request):
+    age1 = request.GET["age1"]
+    age2 = request.GET["age2"]
+    gender = request.GET["gender"]
+    country = request.GET["country"]
+    nativeLanguage = request.GET["nativeLanguage"]
+    practisingLanguage = request.GET["practisingLanguage"]
+
+    LatestSearch.objects.filter(searcher = request.user).update( minAge = age1, maxAge = age2,  gender = gender, 
                         country = country, nativeLanguage = nativeLanguage, practisingLanguage = practisingLanguage )
 
-        if age1 != 0:
-            profiles = profiles.filter(age__gte = age1)
-        if age2 != 100:
-            profiles = profiles.filter(age__lte = age2)
-        if gender != "Both":
-            profiles = profiles.filter(gender = gender)
-        if country != "All":
-            profiles = profiles.filter(country =  country)
-        if nativeLanguage != "All":
-            profiles = profiles.filter(nativeLanguage = nativeLanguage)
-        if practisingLanguage != "All":
-            profiles = profiles.filter(practisingLanguage = practisingLanguage)
+    profiles = UserProfile.objects.exclude(user = request.user).order_by( "-is_online" , "-last_seen")
+    if age1 != 0:
+        profiles = profiles.filter(age__gte = age1)
+    if age2 != 100:
+        profiles = profiles.filter(age__lte = age2)
+    if gender != "Both":
+        profiles = profiles.filter(gender = gender)
+    if country != "All":
+        profiles = profiles.filter(country =  country)
+    if nativeLanguage != "All":
+        profiles = profiles.filter(nativeLanguage = nativeLanguage)
+    if practisingLanguage != "All":
+        profiles = profiles.filter(practisingLanguage = practisingLanguage)
 
-        if not profiles:
-            messages.error(request, "There is no profile that is matched with your filter!")
+    serializedFilter = UserProfileSerializer(profiles, many=True)
 
-
-        latestSearch = LatestSearch.objects.filter(searcher = request.user).first()
-        context = { "profiles":profiles, "countries":countriess, "languages":languages, "numbers":numbers, "latestSearch":latestSearch }
-        return render( request, "home.html", context )
-    else:
-        context = { "countries":countriess, "languages":languages, "numbers":numbers,"latestSearch":latestSearch }
-        return render( request, "home.html", context )
-
-
+    return JsonResponse(serializedFilter.data, safe=False)
 
 
 
@@ -143,9 +140,6 @@ def logout(request):
     request.user.userprofile.save()
     auth.logout(request)
     return redirect("login")
-
-
-
 
 
 
@@ -241,24 +235,21 @@ def sendMessage(request,pk):
     LatestMessage.objects.create(messageText=messagetext).senders.add(request.user,otheruser)
     UnreadMessage.objects.create(sender2=request.user, recipient2=otheruser)
 
-    result = {"messageID": message.id, "sender": message.sender.username, "recipient": message.recipient.username, 
-    "messageText":message.messageText, "created" : (message.created + timedelta(hours=3)).strftime("%H:%M"), "image" : message.sender.userprofile.image.url} 
-    
-    # result = model_to_dict(obj)    
-    # result["created"] = obj.created.strftime("%H:%M")= 
-    # result["image"] = request.user.userprofile.image.url
-    # this works fine but returns id of sender and recipient although we need usernames.
+    serializedMessage = MessageSerializer(message)
+    return JsonResponse(serializedMessage.data)
 
-    return JsonResponse({'message': result})
+
+
+
 
 def getMessage(request, pk):
     otheruser = User.objects.filter(username=pk).first()
     UnreadMessage.objects.filter(sender2=otheruser, recipient2=request.user).all().delete()    
     message = Message.objects.filter(recipient=request.user).last()
-    result = {"messageID": message.id, "sender": message.sender.username, "messageText":message.messageText, 
-              "created" : (message.created + timedelta(hours=3)).strftime("%H:%M"), "image" : message.sender.userprofile.image.url}    
     
-    return JsonResponse({'result': result}, safe=False)
+    serializedMessage = MessageSerializer(message)
+
+    return JsonResponse(serializedMessage.data, safe=False)
 
 
 @login_required

@@ -38,8 +38,8 @@
                   </span><img src="{{ msg.senders.first.userprofile.image.url }}" alt="" />
                 </div>                       
                 <div class="meta">
-                  <h5 class="name bold my-0 text-primary">{{ msg.senders.first }}</h5>
-                  <p class="preview" id="latest{{msg.senders.first}}">{{ msg.messageText}}</p>
+                  <h5 class="name bold my-0 text-primary">{{ msg.senders.first }} </h5>
+                  <p class="preview" id="latest{{msg.senders.first}}" style="text-overflow: ellipsis;">{{ msg.messageText}}</p>
                 </div>
                 {% countUnread msg.senders.first user as notZero %}
                 {% if notZero %}
@@ -58,8 +58,8 @@
                 </span><img src="{{ msg.senders.last.userprofile.image.url }}" alt="" />
               </div>                       
               <div class="meta">
-                <h5 class="name bold my-0 text-primary">{{ msg.senders.last }} </h5>
-                <p class="preview" id="latest{{msg.senders.last}}" >{{ msg.messageText }}</p>
+                <h5 class="name bold my-0 text-primary">{{ msg.senders.last }}</h5>
+                <p class="preview" id="latest{{msg.senders.last}}" style="text-overflow: ellipsis;" >{{ msg.messageText }}</p>
               </div>
               {% countUnread msg.senders.last user as notZero %}
               {% if notZero %}
@@ -126,10 +126,10 @@
 
     <div class="message-input">
       <div class="wrap">
-        <form id=messageBox   autocomplete="off">
+        <form id="messageBox"  method="POST" autocomplete="off">
           {% csrf_token %}
-          <input type="text" name="messagetext" id="messageText" placeholder="Write your message..."  autofocus />
-          <button class="submit" type="submit" id="sendButton" ><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+          <textarea oninput="auto_grow(this)" type="text" name="messagetext" id="messageText" rows="1"  placeholder="Write your message..."  autofocus ></textarea>
+          <button class="submit" type="submit" form="messageBox" id="sendButton" ><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </form>
       </div>
     </div>

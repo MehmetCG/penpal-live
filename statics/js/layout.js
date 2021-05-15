@@ -5,9 +5,9 @@ var oldID2;
 
 function updateMsgLayout() { 
   $.getJSON("/get_message/"+otheruser, function(data){
-    if (data.result.messageID > oldID2) {   
+    if (data.messageID > oldID2) {   
       var counter2 = parseInt($("#alertlayout").text());
-      if (data.result.sender != otheruser){
+      if (data.sender != otheruser){
         ++counter2;
         $("#alertlayout").html(counter2);
         $("#alertlayout").show();
@@ -15,7 +15,7 @@ function updateMsgLayout() {
         $("#alertlayout2").show();
       };   
     };
-    oldID2 = data.result.messageID;
+    oldID2 = data.messageID;
     setTimeout('updateMsgLayout()', 1000);
   });
 };

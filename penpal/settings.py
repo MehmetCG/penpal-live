@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'a5f45f0aacdc8eee3b42f52755807b2255e4e04e0e33b916'
+SECRET_KEY = '***'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['penpal2.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'pages',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,10 +79,10 @@ WSGI_APPLICATION = 'penpal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'penpal_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Mehmetcan72',
-        'HOST': 'database-1.c6iyvws4ijos.us-east-2.rds.amazonaws.com',
+        'NAME': '***',
+        'USER': '***',
+        'PASSWORD': '***',
+        'HOST': '***',
         'PORT': '5432',
     }
 }
@@ -139,7 +140,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "penpal.exchange.2021@gmail.com"
-EMAIL_HOST_PASSWORD = "penpalexchange2021"
+EMAIL_HOST_PASSWORD = "***"
 
 
 django_heroku.settings(locals())

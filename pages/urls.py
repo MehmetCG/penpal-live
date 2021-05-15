@@ -18,6 +18,7 @@ urlpatterns = [
     path("reset_password/", views.resetPassword, name="resetPassword"),
     path("get_message/<pk>", views.getMessage, name="getMessage"),
     path("send_message/<pk>", views.sendMessage, name="sendMessage"),
+    path("search/", views.search, name="search"),
 
 ]
 
