@@ -85,7 +85,7 @@ class LatestMessage(models.Model):
 
 
 @receiver(pre_delete, sender=User)
-def delete_image(sender, instance, **kwargs):
+def delete_latestMessage(sender, instance, **kwargs):
     instance.latestmessage_set.all().delete()
 
 
