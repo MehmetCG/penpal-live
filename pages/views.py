@@ -76,8 +76,10 @@ def signup(request):
                     LatestMessage.objects.create(messageText=messageText).senders.add(request.user,admin)
                     UnreadMessage.objects.create(sender2=admin, recipient2=request.user)                   
                     messages.success(request, "Your account has been created successfully")
-                    send_mail("Welcome to Penpal-Exchange", f"Welcome {username}, we are happy to see you in our comunity!", EMAIL_HOST_USER, [email])
-                 
+                    try:
+                        send_mail("Welcome to Penpal-Exchange", f"Welcome {username}, we are happy to see you in our comunity!", EMAIL_HOST_USER, [email])
+                    except:
+                        pass
                     return redirect("profileUpdate")
                    
         else:
@@ -314,7 +316,10 @@ def resetPassword(request):
             randPassword = randint(11111111,99999999)
             user.set_password(randPassword)
             user.save()
-            send_mail("Reset Password", f"Hi {user.username}! Your temporary password is {randPassword}. You can now log in and set a new password.", EMAIL_HOST_USER, [email]) 
+            try:
+                send_mail("Reset Password", f"Hi {user.username}! Your temporary password is {randPassword}. You can now log in and set a new password.", EMAIL_HOST_USER, [email]) 
+            except:
+                pass
             messages.success(request, "Your temporary password has been sent to your email. You can login and set a new password" )
             return redirect("login")
         else:
